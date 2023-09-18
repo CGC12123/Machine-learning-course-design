@@ -1,0 +1,47 @@
+import numpy as np
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score
+
+# 加载鸢尾花数据集
+iris = load_iris()
+
+# 得到数据集特征矩阵和目标向量
+X = iris.data
+y = iris.target
+
+# 将数据集拆分为训练集和测试集
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# 定义k近邻算法函数
+def k_nearest_neighbors(X_train, y_train, X_test, k):
+    num_test = X_test.shape[0]
+    num_train = X_train.shape[0]
+    
+    # 计算测试集和训练集的L2距离
+    distances = np.sqrt(np.sum(np.square(X_test[:, np.newaxis] - X_train), axis=2))
+    
+    # 对距离进行排序，得到最近的k个邻居索引
+    nearest_indices = np.argsort(distances, axis=1)[:, :k]
+    
+    # 获取最近的k个邻居的标签
+    nearest_labels = y_train[nearest_indices]
+    
+    # 统计每个测试样本的最近邻居中出现最频繁的标签
+    y_pred = np.argmax(np.apply_along_axis(lambda x: np.bincount(x, minlength=3), axis=1, arr=nearest_labels), axis=1)
+    
+    return y_pred
+
+# 设置k值
+k = 4
+
+# 在测试集上进行预测
+y_pred = k_nearest_neighbors(X_train, y_train, X_test, k)
+
+# 输出实际分类、预测分类和准确率
+for actual, predicted in zip(y_test, y_pred):
+    print("Actual:", actual, "Predicted:", predicted)
+
+# 计算准确率
+accuracy = accuracy_score(y_test, y_pred)
+print("Accuracy: %.2f" % accuracy)
