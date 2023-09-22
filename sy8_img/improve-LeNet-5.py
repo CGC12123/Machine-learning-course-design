@@ -16,7 +16,7 @@ class LeNet5(nn.Module):
         self.relu2 = nn.ReLU()
         self.avgpool2 = nn.AvgPool2d(kernel_size=2, stride=2)
         self.flatten = nn.Flatten()
-        self.fc1 = nn.Linear(16 * 4 * 4, 120)  # 修改这里的输入维度为 16 * 4 * 4
+        self.fc1 = nn.Linear(16 * 4 * 4, 120)
         self.relu3 = nn.ReLU()
         self.fc2 = nn.Linear(120, 84)
         self.relu4 = nn.ReLU()
